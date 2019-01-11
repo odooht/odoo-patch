@@ -95,30 +95,6 @@ class JsonApi(http.Controller):
         request.session.authenticate(db, login, password)
         request.session.rotate = False
         return request.env['ir.http'].session_info()
-        
-        """ 
-
-        uid = http.request.env['res.users'].authenticate(
-                     db,login,password,None )
-
-        session = request.session
-
-        session.db = db
-        session.uid = uid
-        session.login = login
-        session.session_token = uid and security.compute_session_token(session, request.env)
-
-        request.uid = uid
-        request.disable_db = False
-
-        if uid:
-            session.context = http.request.env['res.users'].context_get() or {}
-            session.context['uid'] = uid
-            session._fix_lang(session.context)
-
-        http.root.session_store.save(session)
-        """
-
 
     @http.route('/json/user/register',type='json', auth='none', cors='*', csrf=False )
     def register(self,db,login,password):
