@@ -91,6 +91,12 @@ class JsonApi(http.Controller):
     @http.route('/json/user/login',type='json', auth='none', cors='*', csrf=False )
     def login(self,db,login,password, **kw):
         _logger.info('call login with %s, %s, %s', db,login,password )
+        
+        request.session.authenticate(db, login, password)
+        request.session.rotate = False
+        return request.env['ir.http'].session_info()
+        
+        """ 
 
         uid = http.request.env['res.users'].authenticate(
                      db,login,password,None )
@@ -111,7 +117,7 @@ class JsonApi(http.Controller):
             session._fix_lang(session.context)
 
         http.root.session_store.save(session)
-        return request.env['ir.http'].session_info()
+        """
 
 
     @http.route('/json/user/register',type='json', auth='none', cors='*', csrf=False )
