@@ -74,17 +74,21 @@ class JsonApi(http.Controller):
         return "hello!"
 
     @http.route('/json/api',type='json', auth='user',cors='*',csrf=False)
-    def json_api(self,model,method, args,kwargs):
-        _logger.info('model %s call %s with %s, %s', model,method, args,kwargs)
+    def json_api(self,model,method, args,kwargs,sudo=None):
+        _logger.info('model %s call %s with %s, %s, %s', model,method, args,kwargs,sudo)
+        
+        odoo_model = request.env[model]
+        if sudo:
+            odoo_model = odoo_model.sudo(sudo)
 
         if method not in ['read2','search_read2']:
-            return api.call_kw(request.env[model],method,args,kwargs)
+            return api.call_kw(odoo_model,method,args,kwargs)
 
         ret = {
             'read2':        Model.read,
             'search_read2': Model.search_read,
             'create2':      Model.create
-        }[method](request.env[model], *args, **kwargs)
+        }[method](odoo_model, *args, **kwargs)
 
         return ret
 
